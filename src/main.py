@@ -115,11 +115,17 @@ def process_contact(contact_id):
                 #contact.groups = []
         except:
             raise APIException('Some data failed', status_code=400)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
         return jsonify(contact.serialize()), 200
     elif request.method == 'DELETE':
         db.session.delete(contact)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
         print(contact)
         return jsonify({"deleted": {
             "id": contact.id,
